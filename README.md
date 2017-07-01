@@ -1,2 +1,2 @@
 # bas2tap
-Sinclair ZX Spectrum Tape file convertor to Basic source code
+Sinclair ZX Spectrum Tape file converter to Basic source code
