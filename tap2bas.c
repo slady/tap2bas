@@ -28,7 +28,7 @@ void process(FILE *fin, FILE *fout)
   while ((c = getc(fin)) != EOF) {
     if (LINE_START == p) {
       if ('U' == c) {
-	break;
+       break;
       }
 
       lineNo = c * 256 + getc(fin);
@@ -79,8 +79,8 @@ int main(int ac, char **argv)
       fin = fopen(argv[1], "r");
 
       if (NULL == fin) {
-	fprintf(stderr, errIn, argv[1]);
-	return 2;
+       fprintf(stderr, errIn, argv[1]);
+       return 2;
       }
 
       process(fin, stdout);
@@ -91,15 +91,15 @@ int main(int ac, char **argv)
       fin = fopen(argv[1], "r");
 
       if (NULL == fin) {
-	fprintf(stderr, errIn, argv[1]);
-	return 2;
+       fprintf(stderr, errIn, argv[1]);
+       return 2;
       }
 
       fout = fopen(argv[2], "w");
 
       if (NULL == fout) {
-	fprintf(stderr, errOut, argv[2]);
-	return 3;
+       fprintf(stderr, errOut, argv[2]);
+       return 3;
       }
 
       process(fin, fout);
