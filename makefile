@@ -2,11 +2,11 @@
 CC=gcc
 CFLAGS="-Wall"
 
-all: bas2tap
+all: tap2bas
 
-bas2tap: bas2tap.o
+tap2bas: tap2bas.o
 
-bas2tap.o: bas2tap.c
+tap2bas.o: tap2bas.c
 
 clean:
-	rm -f bas2tap.o bas2tap
+	rm -f tap2bas.o tap2bas
