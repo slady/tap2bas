@@ -20,23 +20,22 @@ void esc(int ch, FILE *fout)
 
 void process(FILE *fin, FILE *fout)
 {
-  int c, lineNo;
+  int c, lineNo, s = 0, len;
   position p = LINE_START;
 
-  fseek(fin, 24L, SEEK_SET);
+  fseek(fin, 21L, SEEK_SET);
+  len = getc(fin) + 0x100 * getc(fin) - 2;
+  getc(fin);
 
-  while ((c = getc(fin)) != EOF) {
+  while (((c = getc(fin)) != EOF) && (s < len)) {
     if (LINE_START == p) {
-      if ('U' == c) {
-       break;
-      }
-
       lineNo = c * 256 + getc(fin);
       fprintf(fout, "%5d", lineNo);
       // lineLen
       getc(fin);
       getc(fin);
       p = LINE_READ;
+      s += 4;
       continue;
     }
 
@@ -44,6 +43,7 @@ void process(FILE *fin, FILE *fout)
       // new command line
       fputs("\n", fout);
       p = LINE_START;
+      s++;
     } else if (0x0E == c) {
       // read number and throw it away
       getc(fin);
@@ -51,17 +51,22 @@ void process(FILE *fin, FILE *fout)
       getc(fin);
       getc(fin);
       getc(fin);
+      s += 6;
     } else if (c < ' ') {
       esc(c, fout);
+      s++;
     } else if (c < '~') {
       putc(c, fout);
+      s++;
     } else if (c < FIRST_COMMAND) {
       esc(c, fout);
+      s++;
     } else {
       //putc('\n', fout);
       putc(' ', fout);
       fputs(COMMAND_LIST[c - FIRST_COMMAND], fout);
       putc(' ', fout);
+      s++;
     }
   }
 }
