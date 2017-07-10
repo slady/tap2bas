@@ -17,5 +17,5 @@ all-tests := $(addsuffix .test, $(basename $(wildcard test/*.tap)))
 
 test: clean all $(all-tests)
 
-%.test : %.tap %.bas
-	./tap2bas $(word 1, $?) | diff -q $(word 2, $?) - >/dev/null || (echo "Test $@ failed" && exit 1)
+%.test: %.tap %.bas
+	./tap2bas $(word 1, $?) | diff $(word 2, $?) - || (echo "Test $@ failed" && exit 1)
