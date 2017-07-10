@@ -1,3 +1,8 @@
+; tap2bas - Sinclair ZX Spectrum Basic source code generator
+; Copyright (c) 2017 Petr Sladek (slady)
+;
+; generated from a tape file named: "measure"
+;
  8999 STOP 
  9000 LET cnt=0: LET en= PEEK 23635+256* PEEK 23636
  9010 LET en=en+4: LET cnt=cnt+4

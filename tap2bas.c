@@ -1,7 +1,10 @@
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 const char *errIn = "Cannot open input file: %s\n";
 const char *errOut = "Cannot open output file: %s\n";
+const char *errInForm = "Input file format error, expected: %02X, actual: %02X\n";
 
 const int FIRST_COMMAND = 0xA5;
 const char *COMMAND_LIST[] = { "RND", "INKEY$", "PI", "FN", "POINT", "SCREEN$", "ATTR", "AT", "TAB", "VAL$", "CODE",
@@ -18,14 +21,61 @@ void esc(int ch, FILE *fout)
   fprintf(fout, "`%02x;", ch);
 }
 
+void assrt(const int expected, FILE *fin)
+{
+  int c = getc(fin);
+
+  if (c == expected) {
+    return;
+  }
+
+  fprintf(stderr, errInForm, expected, c);
+  exit(13);
+}
+
+void readHeader(FILE *fin, FILE *fout)
+{
+  int i;
+  char name[11];
+
+  assrt(0x13, fin);
+  assrt(0, fin);
+  assrt(0, fin);
+  assrt(0, fin);
+
+  name[10] = 0;
+
+  for (i = 0; i < 10; i++) {
+    name[i] = getc(fin);
+  }
+
+  for (i = 9; i > 0; i--) {
+    if (name[i] == ' ') {
+      name[i] = 0;
+    } else {
+      break;
+    }
+  }
+
+  for (i = 0; i < 7; i++) {
+    getc(fin);
+  }
+
+  fprintf(fout, "; tap2bas - Sinclair ZX Spectrum Basic source code generator\n");
+  fprintf(fout, "; Copyright (c) 2017 Petr Sladek (slady)\n");
+  fprintf(fout, ";\n");
+  fprintf(fout, "; generated from a tape file named: \"%s\"\n", name);
+  fprintf(fout, ";\n");
+}
+
 void process(FILE *fin, FILE *fout)
 {
   int c, lineNo, s = 0, len;
   position p = LINE_START;
 
-  fseek(fin, 21L, SEEK_SET);
+  readHeader(fin, fout);
   len = getc(fin) + 0x100 * getc(fin) - 2;
-  getc(fin);
+  assrt(0xff, fin);
 
   while (((c = getc(fin)) != EOF) && (s < len)) {
     if (LINE_START == p) {
